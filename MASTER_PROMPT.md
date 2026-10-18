@@ -1,4 +1,4 @@
-# Master Prompt: Events Now (draft v0.2)
+# Master Prompt: Events Now (draft v0.3)
 
 > Status: DRAFT. Items marked [PENDING SITE ANALYSIS] get filled in once eventos.divenue.com
 > is reachable from the build environment. Items marked [NEED] are open questions.
@@ -32,15 +32,15 @@
 5. **Storage**: Cloudflare R2 for event images and generated ticket PDFs; Cloudflare Images for resizing.
 6. **Auth**: Better Auth on D1 (email magic link + Google) for organizers, admins and optional buyer accounts.
 7. **Bot protection**: Cloudflare Turnstile on checkout and organizer signup.
-8. **Email**: Resend (order confirmation, ticket QR, approval notices, payout notices).
+8. **Email**: Resend, same owner account as Cloudflare (order confirmation, ticket QR, approval notices, payout notices).
 9. **Background jobs**: Cloudflare Queues + Cron Triggers (expire holds, send reminders, payout reports).
 10. **Payments**: behind a `PaymentProvider` interface:
-    1. Apple Pay via **[NEED: processor]**. Stripe does not onboard Panamanian businesses.
-       Candidates that serve Panama: Tilopay, PagueloFacil, BAC Credomatic/Cybersource.
+    1. **Tilopay** (recommended single gateway): cards, **Apple Pay** and **Yappy** under one
+       merchant account and one API. Stripe does not onboard Panamanian businesses.
        Apple Pay on the web also requires a verified domain file
        (`/.well-known/apple-developer-merchantid-domain-association`).
-    2. Yappy (Banco General) "Botón de Pago Yappy" integration, added when the merchant account is ready.
-    3. What Divenue uses: [PENDING SITE ANALYSIS].
+    2. Yappy is enabled inside Tilopay once the Yappy commercial account is ready.
+    3. What Divenue uses: [PENDING SITE ANALYSIS]. If it differs, keep Tilopay unless there is a clear reason.
 11. **Analytics**: Cloudflare Web Analytics, plus [NEED: GA4 / Meta Pixel IDs].
 
 ## 3. Public pages
@@ -104,15 +104,25 @@
 2. **Service fee**: Divenue's fee minus a few cents. Divenue fee: [PENDING SITE ANALYSIS].
    Stored as configurable `percent + fixed per ticket`, paid by the buyer and shown before paying.
 3. Holds expire after 10 minutes; expired holds return stock.
-4. Refunds: [NEED: policy, e.g. only if event cancelled; fee refundable or not].
-5. Payout timing: [NEED: e.g. 3 business days after event].
+4. Refunds: **set per event by the organizer** (no refunds / refund until X days before /
+   only if cancelled). Policy shown on the event page and in checkout. Organizer triggers a
+   refund from their dashboard; Events Now executes it through the gateway and deducts it from
+   the organizer balance. If an event is cancelled, full refunds are mandatory.
+5. Payout timing: [NEED: e.g. 3 business days after event; default until decided].
 6. Max tickets per order: default 10.
 
 ## 8. Design
 
-Name: Events Now. Logo, colors, fonts: [NEED, or we create a simple placeholder identity].
+Name: Events Now. Identity is subtle and clean:
+1. Logo: wordmark "events now" in lowercase, with a small filled dot after "now" (a live indicator)
+   in the accent color. Favicon = the dot inside a rounded square.
+2. Colors: ink `#14141A`, paper `#FAFAF7`, muted `#6B6B76`, line `#E7E5E0`, accent coral `#FF5A4E`
+   (buttons, live dot, prices), soft accent `#FFE9E6`. Dark mode: background `#0F0F13`, text `#F2F2EE`.
+3. Type: Inter for UI, Fraunces (serif) for event titles and headlines.
+4. Style: lots of white space, 16px rounded cards, soft shadows, thin borders, photos do the talking.
 Mobile first (traffic comes from Instagram and WhatsApp), big event imagery, fast pages
-(LCP under 2.5s), Spanish UI with English toggle [NEED: confirm].
+(LCP under 2.5s). **Spanish default with ES / EN toggle** in the header (next-intl, `/es` and `/en`
+routes, event content entered in both languages by the organizer, falls back to Spanish).
 Layout patterns mirrored from the reference: [PENDING SITE ANALYSIS].
 
 ## 9. Seed data: 4 sample events (fictional)

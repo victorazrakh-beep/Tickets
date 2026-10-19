@@ -10,7 +10,8 @@ import { scanAsOrganizer, scannerLogout } from "./actions";
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Escáner", robots: { index: false } };
 
-export default async function ScanPage() {
+export default async function ScanPage({ searchParams }: { searchParams: Promise<{ link?: string }> }) {
+  const { link } = await searchParams;
   const [session, profile, { lang }] = await Promise.all([getScannerSession(), getProfile(), getDict()]);
   const es = lang === "es";
   const db = admin();
@@ -30,7 +31,7 @@ export default async function ScanPage() {
           </div>
           <form action={scannerLogout}><button className="btn-ghost h-9">{es ? "Salir" : "Exit"}</button></form>
         </div>
-        <Scanner es={es} initial={{ used: used ?? 0, total: sold?.length ?? 0 }} />
+        <Scanner es={es} eventId={session.eventId} initial={{ used: used ?? 0, total: sold?.length ?? 0 }} />
       </div>
     );
   }
@@ -45,13 +46,13 @@ export default async function ScanPage() {
       <h1 className="font-display font-extrabold text-3xl">{es ? "Escanear entradas" : "Scan tickets"}</h1>
       {!!mine?.length && (
         <div className="card p-5 grid gap-2">
-          <p className="text-sm text-sub">{es ? "Tus eventos" : "Your events"}</p>
+          <p className="text-sm text-sub">{es ? "Escanea como organizador (sin PIN)" : "Scan as the organizer (no PIN)"}</p>
           {mine.map((e) => (
             <form key={e.id} action={scanAsOrganizer.bind(null, e.id)}><button className="btn-ghost w-full justify-start">{e.name}</button></form>
           ))}
         </div>
       )}
-      <LoginForm es={es} />
+      <LoginForm es={es} badLink={link === "invalido"} />
     </div>
   );
 }

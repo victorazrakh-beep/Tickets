@@ -8,14 +8,15 @@ import { STATUS } from "@/lib/status";
 import { env } from "@/lib/env";
 import type { Order, Tier } from "@/lib/types";
 import * as A from "./actions";
+import { CopyButton } from "./CopyButton";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Gestionar evento", robots: { index: false } };
 
 const TABS = ["resumen", "entradas", "codigos", "equipo", "pedidos"] as const;
 
-export default async function Manage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ tab?: string; created?: string }> }) {
-  const [{ id }, { tab: rawTab, created }] = await Promise.all([params, searchParams]);
+export default async function Manage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ tab?: string; created?: string; err?: string }> }) {
+  const [{ id }, { tab: rawTab, created, err }] = await Promise.all([params, searchParams]);
   const { event: ev } = await requireEventManager(id);
   const { lang } = await getDict();
   const es = lang === "es";
@@ -185,21 +186,36 @@ export default async function Manage({ params, searchParams }: { params: Promise
       )}
 
       {tab === "equipo" && (
-        <div className="mt-6 card p-5">
-          <h2 className="font-display font-bold">{es ? "Personal de puerta" : "Door staff"}</h2>
-          <p className="text-sm text-sub">
-            {es ? "Tu equipo entra a " : "Your team goes to "}<b>{env.siteUrl}/scan</b>{es ? " con el código del evento " : " with event code "}<code className="font-bold">{ev.slug}</code>{es ? " y su PIN de 5 dígitos." : " and their 5-digit PIN."}
-          </p>
-          <ul className="mt-3 divide-y divide-line">
-            {(scanners ?? []).map((s) => (
-              <li key={s.id} className="py-2 flex text-sm"><span className="flex-1">{s.name}</span><form action={A.deleteScanner.bind(null, id, s.id)}><button className="text-sub">✕</button></form></li>
-            ))}
-          </ul>
-          <form action={A.addScanner.bind(null, id)} className="mt-4 grid sm:grid-cols-[1fr_140px_auto] gap-2">
-            <input className="input" name="name" placeholder={es ? "Nombre" : "Name"} required />
-            <input className="input" name="pin" inputMode="numeric" pattern="\d{5}" maxLength={5} placeholder="PIN (5)" required />
-            <button className="btn-cta">{es ? "Agregar" : "Add"}</button>
-          </form>
+        <div className="mt-6 grid gap-6">
+          <div className="card p-5 grid gap-3">
+            <h2 className="font-display font-bold">{es ? "Link del escáner" : "Scanner link"}</h2>
+            <p className="text-sm text-sub">{es ? "Compártelo con tu equipo: abre el escáner de este evento sin PIN. Si se filtra, genera uno nuevo y el anterior deja de funcionar." : "Share it with your team: it opens this event's scanner without a PIN. If it leaks, generate a new one and the old one stops working."}</p>
+            <code className="block break-all rounded-xl bg-surface border border-line p-3 text-xs">{`${env.siteUrl}/scan/acceso?e=${ev.id}&k=${ev.scan_token}`}</code>
+            <div className="flex flex-wrap gap-2">
+              <CopyButton text={`${env.siteUrl}/scan/acceso?e=${ev.id}&k=${ev.scan_token}`} label={es ? "Copiar link" : "Copy link"} done={es ? "¡Copiado!" : "Copied!"} />
+              <a className="btn-ghost h-9" target="_blank" rel="noopener" href={`https://wa.me/?text=${encodeURIComponent(`${es ? "Escáner de" : "Scanner for"} ${ev.name}: ${env.siteUrl}/scan/acceso?e=${ev.id}&k=${ev.scan_token}`)}`}>WhatsApp</a>
+              <form action={A.regenerateScanLink.bind(null, id)}><button className="btn-ghost h-9">{es ? "Generar link nuevo" : "New link"}</button></form>
+              <Link href="/scan" className="btn-lime h-9">{es ? "Abrir escáner" : "Open scanner"}</Link>
+            </div>
+          </div>
+          <div className="card p-5">
+            <h2 className="font-display font-bold">{es ? "PINs del personal" : "Staff PINs"}</h2>
+            <p className="text-sm text-sub">{es ? "Cada persona entra a " : "Each person goes to "}<b>{env.siteUrl}/scan</b>{es ? " y escribe solo su PIN de 5 dígitos." : " and types only their 5-digit PIN."}</p>
+            <ul className="mt-3 divide-y divide-line">
+              {(scanners ?? []).map((s) => (
+                <li key={s.id} className="py-2 flex text-sm"><span className="flex-1">{s.name}</span><form action={A.deleteScanner.bind(null, id, s.id)}><button className="text-sub">{es ? "Eliminar" : "Delete"}</button></form></li>
+              ))}
+              {!scanners?.length && <li className="py-2 text-sm text-sub">{es ? "Aún no hay PINs. Crea uno para tu equipo." : "No PINs yet. Create one for your staff."}</li>}
+            </ul>
+            <form action={A.addScanner.bind(null, id)} className="mt-4 grid sm:grid-cols-[1fr_140px_auto] gap-2">
+              <input className="input" name="name" placeholder={es ? "Nombre" : "Name"} required />
+              <input className="input tracking-widest" name="pin" inputMode="numeric" pattern="\d{5}" maxLength={5} placeholder="PIN (5)" required />
+              <button className="btn-cta">{es ? "Crear PIN" : "Create PIN"}</button>
+            </form>
+            {err === "pin_taken" && <p className="mt-2 text-sm text-danger">{es ? "Ese PIN ya está en uso, elige otro." : "That PIN is already in use, pick another."}</p>}
+            {err === "pin_format" && <p className="mt-2 text-sm text-danger">{es ? "El PIN debe tener 5 dígitos." : "The PIN must be 5 digits."}</p>}
+            {err === "save" && <p className="mt-2 text-sm text-danger">{es ? "No pudimos crear el PIN." : "Could not create the PIN."}</p>}
+          </div>
         </div>
       )}
 

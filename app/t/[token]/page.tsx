@@ -34,7 +34,8 @@ export default async function TicketPage({ params }: { params: Promise<{ token: 
         <div className="relative border-t border-dashed border-line-strong mx-5" />
         <div className="p-5 text-center">
           <div className={`mx-auto w-60 rounded-2xl bg-white p-3 ${tk.status !== "valid" ? "opacity-30" : ""}`} dangerouslySetInnerHTML={{ __html: svg }} />
-          <p className="mt-3 font-semibold">{tk.ticket_tiers.name}{tk.admits > 1 && ` · ${fill(t.admits, { n: tk.admits })}`}</p>
+          <p className="mt-2 font-mono text-lg font-bold tracking-[0.3em]">{tk.short_code}</p>
+          <p className="mt-2 font-semibold">{tk.ticket_tiers.name}{tk.admits > 1 && ` · ${fill(t.admits, { n: tk.admits })}`}</p>
           {tk.attendee_name && <p className="text-sm text-sub">{tk.attendee_name}</p>}
           <span className={`mt-3 inline-block rounded-full px-3 py-1 text-xs font-bold ${tk.status === "valid" ? "bg-lime text-lime-ink" : "bg-surface text-sub"}`}>{statusLabel}</span>
           {tk.status === "valid" && <p className="mt-3 text-xs text-muted">{t.show_at_door}</p>}

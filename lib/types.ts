@@ -64,6 +64,7 @@ export interface EventRow {
   is_private: boolean;
   fee_pct: number | null;
   fee_flat: number | null;
+  scan_token?: string | null;
   created_at: string;
 }
 
@@ -96,6 +97,7 @@ export interface Order {
 export interface Ticket {
   id: string;
   token: string;
+  short_code: string;
   order_id: string;
   event_id: string;
   tier_id: string;

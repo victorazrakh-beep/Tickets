@@ -4,15 +4,14 @@ import { admin } from "@/lib/supabase/admin";
 import { getProfile } from "@/lib/auth";
 import { clearScannerSession, hashPin, setScannerSession } from "@/lib/scanner-session";
 
+// Door staff log in with just their 5-digit PIN.
 export async function scannerLogin(_: { error?: string } | undefined, fd: FormData) {
-  const slug = String(fd.get("event") ?? "").trim().toLowerCase();
   const pin = String(fd.get("pin") ?? "").trim();
-  const db = admin();
-  const { data: ev } = await db.from("events").select("id").eq("slug", slug).maybeSingle<{ id: string }>();
-  if (!ev || !/^\d{5}$/.test(pin)) return { error: "invalid" };
-  const { data: staff } = await db.from("scanners").select("name").eq("event_id", ev.id).eq("pin_hash", hashPin(ev.id, pin)).maybeSingle<{ name: string }>();
+  if (!/^\d{5}$/.test(pin)) return { error: "invalid" };
+  const { data: staff } = await admin().from("scanners").select("name, event_id").eq("pin_hash", hashPin(pin))
+    .maybeSingle<{ name: string; event_id: string }>();
   if (!staff) return { error: "invalid" };
-  await setScannerSession(ev.id, staff.name);
+  await setScannerSession(staff.event_id, staff.name);
   redirect("/scan");
 }
 

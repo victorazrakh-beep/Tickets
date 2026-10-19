@@ -38,6 +38,7 @@ export async function sendOrderConfirmation(orderId: string) {
     return `<div style="border:1px solid #e1e3e7;border-radius:12px;padding:16px;margin:12px 0;text-align:center">
       <div style="font-size:13px;color:#5b616b">Entrada ${i + 1} de ${tickets.length} · ${tk.ticket_tiers.name}</div>
       <img src="cid:qr${i}" width="200" height="200" alt="QR" style="margin:8px auto;display:block"/>
+      <div style="font-family:monospace;font-size:18px;font-weight:700;letter-spacing:4px">${tk.short_code}</div>
       <a href="${url(`/t/${tk.token}`)}" style="font-size:13px;color:#14161a">Abrir entrada</a></div>`;
   }));
   if (ev.starts_at) {

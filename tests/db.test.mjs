@@ -1,5 +1,5 @@
 import { PGlite } from "@electric-sql/pglite";
-import { readFileSync } from "fs";
+import { readFileSync, readdirSync } from "fs";
 const db = new PGlite();
 const R = process.argv[2] ?? ".";
 await db.exec(`create role anon; create role authenticated; create schema auth; create schema storage;
@@ -7,7 +7,9 @@ create table auth.users (id uuid primary key default gen_random_uuid(), email te
 create function auth.uid() returns uuid language sql as 'select null::uuid';
 create function gen_random_bytes(n int) returns bytea language sql as $$ select substring(decode(md5(random()::text) || md5(random()::text), 'hex') from 1 for n) $$;
 create table storage.buckets (id text primary key, name text, public boolean);`);
-await db.exec(readFileSync(R + "/supabase/migrations/20261019000000_init.sql", "utf8").replace("create extension if not exists pgcrypto;", ""));
+for (const f of readdirSync(R + "/supabase/migrations").sort()) {
+  await db.exec(readFileSync(R + "/supabase/migrations/" + f, "utf8").replace("create extension if not exists pgcrypto;", ""));
+}
 await db.exec(readFileSync(R + "/supabase/seed.sql", "utf8"));
 const q = async (s, p) => (await db.query(s, p)).rows;
 console.log("events", (await q("select count(*) from events"))[0], "tiers", (await q("select count(*) from ticket_tiers"))[0]);
@@ -41,6 +43,9 @@ try { await q("select * from create_order($1)", [JSON.stringify({ event_id: fest
 // 6. check-in
 const tk = (await q("select token from tickets limit 1"))[0].token;
 console.log((await q("select check_in($1,$2,'door') r", [ev, tk]))[0].r, (await q("select check_in($1,$2,'door') r", [ev, tk]))[0].r, (await q("select check_in($1,'nope','door') r", [ev]))[0].r);
+// 6b. check-in by short code
+const sc = (await q("select short_code from tickets where status='valid' and event_id=$1 limit 1", [ev]))[0].short_code;
+console.log("short code", sc, /^[A-HJ-NP-Z2-9]{8}$/.test(sc), (await q("select check_in($1,$2,'door') r", [ev, sc.toLowerCase()]))[0].r.result);
 // 7. void ticket frees stock
 const t2 = (await q("select id, tier_id from tickets where status='valid' limit 1"))[0];
 await q("select void_ticket($1,'refunded')", [t2.id]);

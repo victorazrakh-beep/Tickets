@@ -7,8 +7,8 @@ import { env } from "@/lib/env";
 const COOKIE = "xopa_scan";
 const sign = (v: string) => createHmac("sha256", env.scannerSecret).update(v).digest("base64url");
 
-export const hashPin = (eventId: string, pin: string) =>
-  createHmac("sha256", env.scannerSecret).update(`${eventId}:${pin}`).digest("hex");
+// PINs are unique across the platform, so the PIN alone identifies the event.
+export const hashPin = (pin: string) => createHmac("sha256", env.scannerSecret).update(`pin:${pin}`).digest("hex");
 
 export async function setScannerSession(eventId: string, name: string) {
   const payload = Buffer.from(JSON.stringify({ eventId, name, exp: Date.now() + 18 * 3600_000 })).toString("base64url");

@@ -1,5 +1,7 @@
 "use server";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { randomBytes } from "crypto";
 import { admin } from "@/lib/supabase/admin";
 import { requireEventManager } from "@/lib/auth";
 import { hashPin } from "@/lib/scanner-session";
@@ -110,8 +112,16 @@ export async function addScanner(eventId: string, fd: FormData) {
   await requireEventManager(eventId);
   const name = str(fd, "name").slice(0, 60);
   const pin = str(fd, "pin");
-  if (!name || !/^\d{5}$/.test(pin)) return;
-  await admin().from("scanners").insert({ event_id: eventId, name, pin_hash: hashPin(eventId, pin) });
+  if (!name || !/^\d{5}$/.test(pin)) redirect(`/manage/${eventId}?tab=equipo&err=pin_format`);
+  // PINs are unique across the whole platform (the PIN alone opens the event's scanner).
+  const { error } = await admin().from("scanners").insert({ event_id: eventId, name, pin_hash: hashPin(pin) });
+  if (error) redirect(`/manage/${eventId}?tab=equipo&err=${error.code === "23505" ? "pin_taken" : "save"}`);
+  redirect(`/manage/${eventId}?tab=equipo`);
+}
+
+export async function regenerateScanLink(eventId: string) {
+  await requireEventManager(eventId);
+  await admin().from("events").update({ scan_token: randomBytes(12).toString("base64url") }).eq("id", eventId);
   done(eventId);
 }
 

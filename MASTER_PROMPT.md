@@ -28,8 +28,8 @@
 
 **Our stack (mirror it, simplified):** Next.js (App Router) + TypeScript + Tailwind + shadcn/ui on
 Vercel; Supabase (Auth, Postgres with RLS, Storage, Realtime); API as Next.js Route Handlers/Server
-Actions (no separate Railway service unless needed); Stripe + Yappy behind a `PaymentProvider`
-interface; Resend; hCaptcha (or Turnstile); Google Places. **Decided: Vercel + Supabase.**
+Actions (no separate Railway service unless needed); Stripe (launch) + Yappy (built, off) behind a
+`PaymentProvider` interface; Resend; hCaptcha (or Turnstile); Google Places. **Decided: Vercel + Supabase.**
 
 ---
 
@@ -136,8 +136,11 @@ before paying. JSON-LD `Event`, OG image.
    the event requires them: cédula, gender, date of birth, RUC/invoice, attendee name per ticket.
 2. Promo code field ("That code is not valid for this event").
 3. Payment method selector:
-   - **Yappy**: user enters Yappy number (8 digits, starts with 6 or 7) → backend creates Yappy
-     order → user confirms in the Yappy app → webhook marks paid. Fallback message if it fails.
+   - **Yappy** (built but **disabled at launch** behind `PAYMENTS_YAPPY_ENABLED=false`): user
+     enters Yappy number (8 digits, starts with 6 or 7) → backend creates Yappy order → user
+     confirms in the Yappy app → webhook marks paid. Fallback message if it fails. Ship the
+     provider class, DB fields (`yappy_phone`, `payment_method = 'yappy'`), webhook route and UI
+     button now; turn on once the Banco General commercial account + API keys exist.
    - **Card**: Stripe Payment Element.
    - **Apple Pay / Google Pay**: Stripe Express Checkout button, shown only if the device
      supports it (`availablePaymentMethods`).
@@ -148,6 +151,19 @@ before paying. JSON-LD `Event`, OG image.
 6. On success: tickets issued automatically, email with QR + `.ics` calendar invite, reminder
    email before the event; if parental consent required, guardian signs at `/permiso/[id]`.
 7. Refunds: only card payments, only if `allow_refunds`; organizer can refund a ticket.
+
+### Payments decision (owner, Oct 2026)
+- **Launch provider: Stripe**, same as the reference: Payment Element (card) + Express Checkout
+  (Apple Pay / Google Pay), PaymentIntents created server-side, `payment_intent.succeeded`
+  webhook issues tickets, refunds via Stripe Refunds API.
+- **Requirement [NEED]:** Stripe does not onboard Panama-registered businesses. A US entity
+  (e.g. Delaware LLC via Stripe Atlas) with US bank account is required. Fallback: Tilopay.
+- **Yappy:** structure built now, disabled until credentials exist.
+- All providers implement one interface so they can be swapped without touching checkout UI:
+  `createPayment(order) → {clientSecret | redirectUrl}`, `handleWebhook(req) → PaymentEvent`,
+  `refund(payment, amount)`. Registry: `stripe` (on), `yappy` (off), `tilopay` (stub).
+- Apple Pay domain verification file served at
+  `/.well-known/apple-developer-merchantid-domain-association` (registered in Stripe dashboard).
 
 ## 6. Organizer (`/crear`, `/mis-eventos`, `/manage/[id]`)
 

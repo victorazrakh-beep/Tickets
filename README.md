@@ -1,36 +1,38 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Xopa
 
-## Getting Started
+Ticketing for parties, concerts and events in Panama. Next.js (App Router) on Vercel + Supabase.
+Product spec: [`MASTER_PROMPT.md`](MASTER_PROMPT.md).
 
-First, run the development server:
+## What's in v1
+
+- Public: home, search with date filters, event pages (lineup, Spotify/YouTube, map, WhatsApp, JSON-LD), blog, legal, sitemap/robots, ES/EN, dark/light.
+- Buying: tiers and tables, sales windows, hidden tiers with unlock codes, sequential release, deposits, pay-what-you-want,
+  promo codes, promoter links (`?ref=CODE`), extra buyer fields (cédula, gender, DOB, RUC), 9% + $1 service fee,
+  10-minute stock holds, free reservations, QR tickets by email with calendar invite, order lookup by email + code.
+- Organizers: create/edit events with cover upload, review flow, tiers CRUD and ordering, codes, promoters with sales,
+  door staff with 5-digit PINs, orders table, void tickets, pause/resume sales, payout requests.
+- Door: `/scan` camera scanner, one check-in per ticket guaranteed by the database.
+- Admin: review queue (approve / request changes, emails the organizer), featured events, suspend, mark payouts paid.
+
+Payments: **test mode** (`PAYMENTS_MOCK=true`) simulates the gateway. Stripe and Yappy are wired behind
+`lib/payments/` and switch on with env flags once accounts exist (see the TODO notes in each provider file).
+
+Not in v1 (Phase 2): community feed, profiles/follows, DMs, RSVP, tier approval requests, parental consent, auto-translation.
+
+## Setup
+
+1. **Supabase**: create a project. In SQL Editor run `supabase/migrations/20261019000000_init.sql`, then `supabase/seed.sql`
+   for 4 demo events. (Or link the repo with the Supabase GitHub integration so migrations apply automatically.)
+   - Auth → URL Configuration: Site URL = your Vercel URL; add `https://<your-app>.vercel.app/auth/callback` to Redirect URLs.
+   - Auth → Providers → Google (optional): add a Google OAuth client.
+2. **Vercel**: import this repo, add the variables from `.env.example`, deploy.
+3. **Admin access**: put your email in `ADMIN_EMAILS`, sign up, then open `/admin`.
+
+## Develop
 
 ```bash
+cp .env.example .env.local   # fill in Supabase keys
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run test:db              # database logic tests (in-memory Postgres)
 ```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

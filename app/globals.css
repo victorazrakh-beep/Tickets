@@ -1,26 +1,84 @@
 @import "tailwindcss";
 
+/* Xopa tokens: graphite base (dark default) + lime signature accent. */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #131519;
+  --surface: #1c1f25;
+  --card: #23272e;
+  --border: #30353e;
+  --border-strong: #424852;
+  --text-main: #eceef1;
+  --text-sub: #9aa1ac;
+  --text-muted: #6b7280;
+  --lime: #e8ff3a;
+  --lime-ink: #131519;
+  --lime-text: #e8ff3a;
+  --cta: #f4f5f7;
+  --cta-fg: #0a0b0d;
+  --danger: #ff453a;
+  --ok: #30d158;
+  color-scheme: dark;
+}
+.light {
+  --bg: #eceef0;
+  --surface: #ffffff;
+  --card: #ffffff;
+  --border: #e1e3e7;
+  --border-strong: #cdd1d7;
+  --text-main: #14161a;
+  --text-sub: #5b616b;
+  --text-muted: #9aa0a8;
+  --lime-text: #5b6b00;
+  --cta: #16181c;
+  --cta-fg: #ffffff;
+  --danger: #dc2626;
+  --ok: #16a34a;
+  color-scheme: light;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-card: var(--card);
+  --color-line: var(--border);
+  --color-line-strong: var(--border-strong);
+  --color-main: var(--text-main);
+  --color-sub: var(--text-sub);
+  --color-muted: var(--text-muted);
+  --color-lime: var(--lime);
+  --color-lime-ink: var(--lime-ink);
+  --color-lime-text: var(--lime-text);
+  --color-cta: var(--cta);
+  --color-cta-fg: var(--cta-fg);
+  --color-danger: var(--danger);
+  --color-ok: var(--ok);
+  --font-sans: var(--font-body), system-ui, sans-serif;
+  --font-display: var(--font-heading), var(--font-body), sans-serif;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--text-main);
 }
+
+@utility btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-full px-5 h-11 text-sm font-semibold transition active:scale-[.98] disabled:opacity-50 disabled:pointer-events-none;
+}
+@utility btn-lime { @apply btn bg-lime text-lime-ink hover:brightness-95; }
+@utility btn-cta { @apply btn bg-cta text-cta-fg hover:opacity-90; }
+@utility btn-ghost { @apply btn border border-line-strong text-main hover:bg-surface; }
+@utility input {
+  &:is(textarea) { @apply h-auto py-3; }
+  @apply w-full h-11 rounded-xl bg-surface border border-line px-3.5 text-sm text-main placeholder:text-muted outline-none focus:border-line-strong focus:ring-2 focus:ring-lime/30;
+}
+@utility label { @apply block text-xs font-semibold text-sub mb-1.5; }
+@utility card { @apply rounded-2xl bg-card border border-line; }
+@utility chip { @apply inline-flex items-center h-9 px-4 rounded-full border border-line text-sm text-sub hover:text-main hover:border-line-strong transition; }
+@utility chip-on { @apply chip bg-cta text-cta-fg border-transparent hover:text-cta-fg; }
+
+@keyframes marquee { from { transform: translateX(0) } to { transform: translateX(-50%) } }
+.marquee { animation: marquee 40s linear infinite; }
+@keyframes pulse-dot { 0%,100% { opacity: 1 } 50% { opacity: .35 } }
+.live-dot { animation: pulse-dot 1.6s ease-in-out infinite; }
+@keyframes check-pop { 0% { transform: scale(.6); opacity: 0 } 60% { transform: scale(1.08); opacity: 1 } 100% { transform: scale(1) } }
+.check-pop { animation: check-pop .35s ease-out both; }

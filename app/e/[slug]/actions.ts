@@ -5,7 +5,17 @@ import { getUser } from "@/lib/auth";
 import { getProvider, methodToProvider, enabledMethods } from "@/lib/payments";
 import { sendOrderConfirmation } from "@/lib/email";
 import { publicTier } from "@/lib/data";
+import { grantEventAccess, hasEventAccess, needsPassword, passwordMatches } from "@/lib/event-access";
 import type { EventRow, Order, Tier } from "@/lib/types";
+
+// Private events: check the shared password and remember access in this browser.
+export async function unlockEvent(eventId: string, password: string): Promise<{ ok: boolean }> {
+  const { data: ev } = await admin().from("events").select("id, is_private, access_passwords").eq("id", eventId)
+    .single<{ id: string; is_private: boolean; access_passwords: string[] }>();
+  if (!ev || !passwordMatches(ev, password)) return { ok: false };
+  await grantEventAccess(ev.id);
+  return { ok: true };
+}
 
 export type CodeResult =
   | { type: "unlock"; tiers: Omit<Tier, "unlock_code">[] }
@@ -65,6 +75,7 @@ export async function checkout(input: CheckoutInput, lang: "es" | "en"): Promise
   const db = admin();
   const { data: ev } = await db.from("events").select("*").eq("id", p.event_id).single<EventRow>();
   if (!ev) return fail("EVENT_NOT_ON_SALE");
+  if (needsPassword(ev) && !(await hasEventAccess(ev.id))) return fail("EVENT_NOT_ON_SALE");
   const missing = (ev.require_phone && !p.phone) || (ev.requires_cedula && !p.cedula) || (ev.require_gender && !p.gender)
     || (ev.require_dob && !p.dob) || (ev.collect_ruc && !p.ruc);
   if (missing) return { error: lang === "es" ? "Completa los datos requeridos por el evento." : "Fill in the details this event requires." };

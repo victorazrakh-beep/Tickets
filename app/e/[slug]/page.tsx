@@ -9,6 +9,8 @@ import { eventDate, eventTime } from "@/lib/format";
 import { env } from "@/lib/env";
 import { TicketPanel } from "./TicketPanel";
 import { ShareButton } from "./ShareButton";
+import { PasswordGate } from "./PasswordGate";
+import { hasEventAccess, needsPassword } from "@/lib/event-access";
 
 export const dynamic = "force-dynamic";
 
@@ -17,6 +19,7 @@ type Params = { params: Promise<{ slug: string }>; searchParams: Promise<{ ref?:
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const ev = await getEventBySlug((await params).slug);
   if (!ev) return {};
+  if (ev.is_private) return { title: "Evento privado", robots: { index: false, follow: false } };
   const description = ev.description.slice(0, 160);
   return {
     title: ev.name,
@@ -43,6 +46,9 @@ export default async function EventPage({ params, searchParams }: Params) {
   const [{ lang, t }, profile] = await Promise.all([getDict(), getProfile()]);
   const canManage = !!profile && (profile.id === ev.organizer_id || profile.role === "admin");
   if (!["live", "closed"].includes(ev.status) && !canManage) notFound();
+  if (needsPassword(ev) && !canManage && !(await hasEventAccess(ev.id))) {
+    return <PasswordGate eventId={ev.id} name={ev.name} es={lang === "es"} />;
+  }
 
   const fee = await getFee(ev);
   const organizer = ev.organizer?.organizer_name || ev.organizer?.name || ev.organizer_display_name || "Xopa";
@@ -62,6 +68,12 @@ export default async function EventPage({ params, searchParams }: Params) {
   return (
     <div className="mx-auto max-w-6xl px-4 py-6 md:py-10">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      {ev.is_private && canManage && (
+        <div className="mb-4 rounded-xl border border-line bg-surface p-3 text-sm">
+          🔒 {lang === "es" ? "Evento privado: no aparece en búsquedas" : "Private event: hidden from search"}
+          {(ev.access_passwords?.length ?? 0) > 0 && (lang === "es" ? " y pide contraseña." : " and asks for a password.")}
+        </div>
+      )}
       {ev.status !== "live" && (
         <div className="mb-4 rounded-xl border border-line bg-surface p-3 text-sm">
           {lang === "es" ? "Vista previa · estado: " : "Preview · status: "}<b>{ev.status}</b>

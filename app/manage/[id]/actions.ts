@@ -158,3 +158,27 @@ export async function setStatus(eventId: string, status: "closed" | "live" | "ca
   await admin().from("events").update({ status }).eq("id", eventId);
   done(eventId);
 }
+
+// ── Privacy ──
+export async function setPrivate(eventId: string, isPrivate: boolean) {
+  await requireEventManager(eventId);
+  await admin().from("events").update({ is_private: isPrivate }).eq("id", eventId);
+  done(eventId);
+}
+
+export async function addAccessPassword(eventId: string, fd: FormData) {
+  const { event } = await requireEventManager(eventId);
+  const pw = str(fd, "password").slice(0, 40);
+  if (pw.length < 3) redirect(`/manage/${eventId}?err=pw_short`);
+  const list = event.access_passwords ?? [];
+  if (list.some((p) => p.toLowerCase() === pw.toLowerCase()) || list.length >= 20) return done(eventId);
+  // Adding a password makes the event private.
+  await admin().from("events").update({ access_passwords: [...list, pw], is_private: true }).eq("id", eventId);
+  done(eventId);
+}
+
+export async function removeAccessPassword(eventId: string, pw: string) {
+  const { event } = await requireEventManager(eventId);
+  await admin().from("events").update({ access_passwords: (event.access_passwords ?? []).filter((p) => p !== pw) }).eq("id", eventId);
+  done(eventId);
+}

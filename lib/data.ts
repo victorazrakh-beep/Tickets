@@ -45,7 +45,7 @@ export async function getEventBySlug(slug: string) {
   return data;
 }
 
-// Remove secrets before sending tiers to the browser.
+// Remove secrets before sending data to the browser.
 export const publicTier = ({ unlock_code: _unlock, ...t }: Tier) => t;
 
 export async function getFee(ev: Pick<EventRow, "fee_pct" | "fee_flat">) {

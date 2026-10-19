@@ -61,7 +61,7 @@ export default async function Manage({ params, searchParams }: { params: Promise
         <div>
           <Link href="/mis-eventos" className="text-sm text-sub">← {es ? "Mis eventos" : "My events"}</Link>
           <h1 className="mt-1 font-display font-extrabold text-3xl">{ev.name}</h1>
-          <p className="text-sub text-sm">{eventDate(ev.starts_at, lang, { tbd: ev.date_tbd })} · {ev.location} · <b>{STATUS[ev.status][lang]}</b></p>
+          <p className="text-sub text-sm">{eventDate(ev.starts_at, lang, { tbd: ev.date_tbd })} · {ev.location} · <b>{STATUS[ev.status][lang]}</b>{ev.is_private && <> · 🔒 {es ? "Privado" : "Private"}</>}</p>
           {ev.status === "rejected" && ev.review_note && <p className="mt-2 text-sm text-danger">{ev.review_note}</p>}
         </div>
         <div className="flex flex-wrap gap-2">
@@ -108,6 +108,40 @@ export default async function Manage({ params, searchParams }: { params: Promise
                 <span className={p.status === "paid" ? "text-ok" : "text-sub"}>{p.status === "paid" ? `${es ? "Pagado" : "Paid"} ${p.reference ?? ""}` : es ? "Solicitado" : "Requested"}</span>
               </div>
             ))}
+          </div>
+          <div className="card p-5 grid gap-3">
+            <div className="flex flex-wrap items-center gap-3 justify-between">
+              <div>
+                <h2 className="font-display font-bold">{es ? "Privacidad" : "Privacy"}</h2>
+                <p className="text-sm text-sub">
+                  {!ev.is_private
+                    ? (es ? "Público: aparece en Xopa y en buscadores." : "Public: listed on Xopa and in search engines.")
+                    : (ev.access_passwords?.length
+                      ? (es ? "Privado con contraseña: no aparece en búsquedas y pide contraseña al abrir el link." : "Private with password: hidden from search and asks for a password.")
+                      : (es ? "Privado: no aparece en búsquedas; solo entra quien tenga el link." : "Private: hidden from search; only people with the link can open it."))}
+                </p>
+              </div>
+              <form action={A.setPrivate.bind(null, id, !ev.is_private)}>
+                <button className={ev.is_private ? "btn-ghost h-9" : "btn-cta h-9"}>{ev.is_private ? (es ? "Hacer público" : "Make public") : (es ? "Hacer privado" : "Make private")}</button>
+              </form>
+            </div>
+            <div className="border-t border-line pt-3">
+              <span className="label">{es ? "Contraseñas de acceso (opcional)" : "Access passwords (optional)"}</span>
+              <ul className="flex flex-wrap gap-2">
+                {(ev.access_passwords ?? []).map((p) => (
+                  <li key={p} className="inline-flex items-center gap-2 rounded-full border border-line px-3 h-8 text-sm">
+                    <code>{p}</code>
+                    <form action={A.removeAccessPassword.bind(null, id, p)}><button className="text-sub" aria-label="remove">✕</button></form>
+                  </li>
+                ))}
+              </ul>
+              <form action={A.addAccessPassword.bind(null, id)} className="mt-2 flex gap-2">
+                <input className="input" name="password" minLength={3} maxLength={40} placeholder={es ? "Contraseña (ej. familia2026)" : "Password (e.g. family2026)"} required />
+                <button className="btn-ghost shrink-0">{es ? "+ Agregar" : "+ Add"}</button>
+              </form>
+              {err === "pw_short" && <p className="mt-2 text-sm text-danger">{es ? "Mínimo 3 caracteres." : "At least 3 characters."}</p>}
+              <p className="mt-2 text-xs text-muted">{es ? "Comparte la contraseña junto con el link. Puedes tener varias (por ejemplo una por grupo) y borrarlas cuando quieras." : "Share the password along with the link. You can have several (e.g. one per group) and delete them anytime."}</p>
+            </div>
           </div>
           <div className="card p-5">
             <h2 className="font-display font-bold">{es ? "Link para compartir" : "Share link"}</h2>

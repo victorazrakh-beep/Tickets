@@ -62,6 +62,7 @@ export interface EventRow {
   allow_refunds: boolean;
   featured: boolean;
   is_private: boolean;
+  access_passwords?: string[];
   fee_pct: number | null;
   fee_flat: number | null;
   scan_token?: string | null;

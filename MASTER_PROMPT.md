@@ -43,7 +43,7 @@ in Panama.
 2. **Organizers** (any logged-in user) create events in a single long form, add tiers, promo codes,
    promoters and scanner staff, track sales, refund, and request payouts.
 3. **Admins** moderate events before/after they go live and pick featured events.
-4. **Community**: user profiles with @handles, follow, posts with likes/comments, event RSVP
+4. **Community (Phase 2)**: user profiles with @handles, follow, posts with likes/comments, event RSVP
    ("who's going"), feed, and direct messages.
 5. **Events Now acts as the organizer's collection agent**: it collects payment, deducts the
    service fee, and pays out the rest.
@@ -57,10 +57,10 @@ Public (indexable):
   eventos", "Crear evento"), featured/upcoming events, marquee animation, footer.
 - `/busqueda` Search & listing of events.
 - `/e/[slug]` Event page (slug = name + 4-char suffix, e.g. `coco-disco-a8e0`).
-- `/comunidad` Community feed.
+- `/comunidad` Community feed. **(Phase 2)**
 - `/crear` Create event (landing + form; requires login to publish).
 - `/blog`, `/blog/en`, `/blog/[slug]` (ES default, EN alternates with hreflang).
-- `/u/[handle]` or `/@handle` public profile.
+- `/u/[handle]` or `/@handle` public profile. **(Phase 2; v1 shows a simple organizer page)**
 - Legal: terms, privacy, cookies, organizer agreement (original texts **[NEED]**).
 
 Private (noindex, disallowed in robots.txt):
@@ -68,7 +68,7 @@ Private (noindex, disallowed in robots.txt):
 - `/permiso/[id]` parental consent signature page (minors)
 - `/mis-eventos` organizer list · `/manage/[eventId]` organizer dashboard
 - `/scan` door scanner (staff login with event + 5-digit PIN)
-- `/mensajes` DMs · `/perfil` profile settings
+- `/perfil` profile settings · `/mensajes` DMs **(Phase 2)**
 - `/admin` moderation · `/admin/destacados` featured events
 
 Header: logo, Find events, Venues (external, optional), My tickets, Create event, ES/EN toggle,
@@ -113,7 +113,7 @@ Computed: `sold_out`.
 - `scanners` (event_id, name, pin hash) · `checkins`
 - `consents` (ticket/order, guardian name, signature, signed_at)
 - `payouts` (event_id, amount, status requested|paid, reference)
-- Social: `posts`, `comments`, `post_likes`, `follows`, `rsvps` (going/interested), `seeds`
+- Social **(Phase 2, do not create in v1)**: `posts`, `comments`, `post_likes`, `follows`, `rsvps` (going/interested), `seeds`
   (pre-seeded social content attached to events), `message_threads`, `messages` (read_at)
 
 ---
@@ -121,9 +121,8 @@ Computed: `sold_out`.
 ## 4. Event page `/e/[slug]`
 
 Cover (or gallery), title, date/time (or "TBD"), location + Google Maps link, organizer card
-(avatar, name, verified badge, follow), description, lineup with times, embedded Spotify / YouTube,
-links, rules (text or PDF), age/consent notice, WhatsApp contact button, "who's going" avatars
-(unless hidden), share button, RSVP, posts from the event, related events.
+(avatar, name, verified badge; follow = Phase 2), description, lineup with times, embedded Spotify / YouTube,
+links, rules (text or PDF), age/consent notice, WhatsApp contact button, share button, related events. Phase 2: "who's going" avatars, RSVP, event posts.
 **Ticket panel**: tiers in `sort_order`, price, perks, remaining (if `show_remaining`), sold out /
 sales closed / not yet open states, sequential lock, hidden tier unlock by code, quantity stepper
 within min/max, table tiers, deposit tiers ("Deposit only"), variable price input, approval tiers
@@ -174,7 +173,7 @@ before paying. JSON-LD `Event`, OG image.
 - **Manage**: edit details, tiers CRUD + drag reorder, promo codes, promoters (with sales per
   promoter), scanners (name + PIN), sales dashboard (gross, fees, net, tickets by tier, orders
   list), delete order/ticket, refund ticket, approve/reject tier requests, close sales, publish,
-  request payout, attendee list, messages with buyers.
+  request payout, attendee list. (Messages with buyers = Phase 2.)
 
 ## 7. Scanner (`/scan`)
 
@@ -187,7 +186,12 @@ used", "Ticket not found", shows attendee name and tier, counter of checked-in v
 Moderation queue (approve/reject with reason, emailed), suspend events, featured events
 (`/admin/destacados`), refunds, payouts marked paid, user/organizer verification.
 
-## 9. Community
+## 9. Community — **PHASE 2 (not in v1, owner decision Oct 2026)**
+
+Do not build in v1. No social tables, routes or UI in v1, but use
+`profiles.handle` and organizer follow-ready IDs so it can be added later without migrations
+that break existing data.
+
 
 Feed, posts (text + image), likes, comments, follow/unfollow, profiles by @handle, RSVP to events,
 event posts, DMs with threads + unread badge (Supabase Realtime).
@@ -220,5 +224,7 @@ Mobile first. Events Now may keep this structure but use its own accent **[NEED:
 3. Auth (email + Google + captcha), profiles.
 4. Checkout: Stripe card + Apple/Google Pay, Yappy, free; orders, tickets, QR, emails, `.ics`.
 5. Organizer create + manage (tiers, codes, promoters, scanners, sales, refunds, payouts).
-6. Scanner. 7. Admin. 8. Community + DMs. 9. Translation, SEO, analytics.
-10. QA: oversell test, webhook retries, Apple Pay on real iPhone, in-app browsers, mobile.
+6. Scanner. 7. Admin. 8. Translation, SEO, analytics.
+9. QA: oversell test, webhook retries, Apple Pay on real iPhone, in-app browsers, mobile.
+10. **Phase 2:** community (profiles by @handle, follow, posts, likes, comments, feed, RSVP /
+    who's going), direct messages with realtime, Yappy activation.

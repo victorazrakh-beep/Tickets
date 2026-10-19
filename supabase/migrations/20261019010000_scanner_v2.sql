@@ -15,7 +15,7 @@ update public.events set scan_token = translate(encode(gen_random_bytes(12), 'ba
 
 -- Short code (8 chars, no look-alike characters) to type in when a QR can't be read.
 create function public.new_short_code() returns text
-language plpgsql as $$
+language plpgsql set search_path = public, extensions as $$
 declare
   alphabet constant text := 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
   code text; b bytea;

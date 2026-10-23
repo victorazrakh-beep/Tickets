@@ -220,7 +220,7 @@ Mobile first.
 ### Monta brand (decided)
 - **Name:** Monta, from the Panamanian "¿Qué se monta hoy?" ("what's going on today?").
   Tagline: "¿Qué se monta hoy?" / "What's on tonight?".
-- **Logo:** `brand/logo.svg` (ticket with side notches and an M cut through it, then a lowercase
+- **Logo:** `brand/logo.svg` (ticket with side notches and an X cut through it, then a lowercase
   "monta" wordmark in Archivo 800 and a live dot). Mark alone: `brand/logo-mark.svg`, used as the favicon/app icon.
 - **Colors:** reuse the graphite token set above, with one signature accent
   **Monta lime `#E8FF3A`** (CTA buttons, live dot, prices, scanner success) and text on lime

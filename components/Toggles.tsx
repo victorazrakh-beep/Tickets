@@ -23,7 +23,7 @@ export function ThemeToggle() {
       className="h-9 w-9 grid place-items-center rounded-full border border-line text-sub hover:text-main"
       onClick={() => {
         const light = document.documentElement.classList.toggle("light");
-        try { localStorage.setItem("xopa-theme", light ? "light" : "dark"); } catch {}
+        try { localStorage.setItem("monta-theme", light ? "light" : "dark"); } catch {}
       }}
     >
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z" /></svg>

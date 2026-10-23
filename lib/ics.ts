@@ -8,7 +8,7 @@ export function ics(ev: { id: string; name: string; description: string; locatio
   return [
     "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Monta//Tickets//ES", "CALSCALE:GREGORIAN", "METHOD:PUBLISH",
     "BEGIN:VEVENT",
-    `UID:${ev.id}@xopa`, `DTSTAMP:${stamp(new Date())}`, `DTSTART:${stamp(start)}`, `DTEND:${stamp(end)}`,
+    `UID:${ev.id}@monta`, `DTSTAMP:${stamp(new Date())}`, `DTSTART:${stamp(start)}`, `DTEND:${stamp(end)}`,
     `SUMMARY:${esc(ev.name)}`, `DESCRIPTION:${esc(ev.description.slice(0, 500) + "\n\n" + ev.url)}`,
     `LOCATION:${esc(ev.location)}`, `URL:${ev.url}`,
     "END:VEVENT", "END:VCALENDAR",

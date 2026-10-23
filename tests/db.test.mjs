@@ -24,11 +24,11 @@ let [c] = await q("select * from confirm_order($1,'mock','ref1')", [o.id]);
 let [c2] = await q("select * from confirm_order($1,'mock','ref1')", [o.id]);
 console.log("confirmed", c.status, "idempotent", c2.status, "tickets", (await q("select count(*) from tickets where order_id=$1", [o.id]))[0]);
 // 2. promo
-await q("insert into promo_codes(event_id,code,discount_type,value,max_uses) values($1,'XOPA10','percent',10,1)", [ev]);
-[o] = await order([{ tier_id: tiers[0].id, quantity: 2 }], { promo_code: "xopa10" });
+await q("insert into promo_codes(event_id,code,discount_type,value,max_uses) values($1,'MONTA10','percent',10,1)", [ev]);
+[o] = await order([{ tier_id: tiers[0].id, quantity: 2 }], { promo_code: "monta10" });
 console.log("promo order", o.subtotal, o.discount, o.fee, o.total);
 await q("select confirm_order($1,'mock',null)", [o.id]);
-try { await order([{ tier_id: tiers[0].id, quantity: 1 }], { promo_code: "XOPA10" }); console.log("BAD: promo reused"); } catch (e) { console.log("promo maxed ->", e.message); }
+try { await order([{ tier_id: tiers[0].id, quantity: 1 }], { promo_code: "MONTA10" }); console.log("BAD: promo reused"); } catch (e) { console.log("promo maxed ->", e.message); }
 // 3. oversell: tables qty 10
 for (let i = 0; i < 5; i++) await order([{ tier_id: tiers[2].id, quantity: 2 }]);
 try { await order([{ tier_id: tiers[2].id, quantity: 1 }]); console.log("BAD: oversold"); } catch (e) { console.log("oversell ->", e.message); }

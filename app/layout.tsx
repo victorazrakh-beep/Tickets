@@ -25,7 +25,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang={lang} className={`${heading.variable} ${body.variable}`} suppressHydrationWarning>
       <head>
-        <script dangerouslySetInnerHTML={{ __html: "try{if(localStorage.getItem('xopa-theme')==='light')document.documentElement.classList.add('light')}catch(e){}" }} />
+        <script dangerouslySetInnerHTML={{ __html: "try{if(localStorage.getItem('monta-theme')==='light')document.documentElement.classList.add('light')}catch(e){}" }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ "@context": "https://schema.org", "@type": "Organization", name: "Monta", url: env.siteUrl, logo: `${env.siteUrl}/icon.svg` }) }} />
       </head>
       <body className="font-sans antialiased min-h-screen flex flex-col">

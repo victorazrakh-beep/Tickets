@@ -1,4 +1,4 @@
--- Xopa v1 schema. Apply with the Supabase GitHub integration or paste into the SQL editor.
+-- Monta v1 schema. Apply with the Supabase GitHub integration or paste into the SQL editor.
 -- All writes go through the Next.js server with the service role; RLS only exposes public reads.
 
 create extension if not exists pgcrypto;

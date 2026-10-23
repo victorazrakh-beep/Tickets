@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import { env } from "@/lib/env";
 
 // Remembers that this browser entered a private event's password (signed cookie, 30 days).
-const name = (eventId: string) => `xopa_ev_${eventId.slice(0, 8)}`;
+const name = (eventId: string) => `monta_ev_${eventId.slice(0, 8)}`;
 const sign = (eventId: string) => createHmac("sha256", env.scannerSecret).update(`event:${eventId}`).digest("base64url");
 
 export async function grantEventAccess(eventId: string) {

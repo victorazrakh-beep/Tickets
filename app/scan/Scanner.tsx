@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 type Result = { result: string; name?: string; tier?: string; admits?: number; checked_in_at?: string; token?: string };
 
 // Tickets this phone already checked in, so a repeat shows instantly even with bad signal.
-const storeKey = (eventId: string) => `xopa_scanned_${eventId}`;
+const storeKey = (eventId: string) => `monta_scanned_${eventId}`;
 const readScanned = (eventId: string) => {
   try { return new Set<string>(JSON.parse(localStorage.getItem(storeKey(eventId)) || "[]")); } catch { return new Set<string>(); }
 };

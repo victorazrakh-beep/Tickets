@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import { env } from "@/lib/env";
 
 // Door staff log in with event code + PIN; we keep a signed cookie for 18 hours.
-const COOKIE = "xopa_scan";
+const COOKIE = "monta_scan";
 const sign = (v: string) => createHmac("sha256", env.scannerSecret).update(v).digest("base64url");
 
 // PINs are unique across the platform, so the PIN alone identifies the event.

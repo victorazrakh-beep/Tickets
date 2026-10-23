@@ -1,8 +1,8 @@
-# Master Prompt: Xopa (v1.1, based on full analysis of eventos.divenue.com)
+# Master Prompt: Monta (v1.1, based on full analysis of eventos.divenue.com)
 
 > Reference product: eventos.divenue.com (Panama). We replicate its **structure, flows, data model
 > and feature set 1:1**. Brand name, logo, written copy, photos, legal texts and event data are
-> **original to Xopa** (never copy Divenue's text, logo or images).
+> **original to Monta** (never copy Divenue's text, logo or images).
 > Items marked **[NEED]** are decisions or credentials the owner must provide.
 
 ---
@@ -35,7 +35,7 @@ Actions (no separate Railway service unless needed); Stripe (launch) + Yappy (bu
 
 ## 1. Product summary
 
-Xopa is a Spanish-first (ES/EN) ticketing + social platform for parties, concerts and events
+Monta is a Spanish-first (ES/EN) ticketing + social platform for parties, concerts and events
 in Panama.
 
 1. **Buyers** browse, pick ticket tiers or tables, pay with Yappy, card, Apple Pay or Google Pay
@@ -45,7 +45,7 @@ in Panama.
 3. **Admins** moderate events before/after they go live and pick featured events.
 4. **Community (Phase 2)**: user profiles with @handles, follow, posts with likes/comments, event RSVP
    ("who's going"), feed, and direct messages.
-5. **Xopa acts as the organizer's collection agent**: it collects payment, deducts the
+5. **Monta acts as the organizer's collection agent**: it collects payment, deducts the
    service fee, and pays out the rest.
 
 ---
@@ -199,7 +199,7 @@ event posts, DMs with threads + unread badge (Supabase Realtime).
 ## 10. Business rules
 
 - Currency USD. Platform service fee default **9% + US$1.00 per ticket, paid by the buyer**, shown
-  as a separate line (Divenue's rate). **Xopa matches it: 9% + US$1.00** (stored as
+  as a separate line (Divenue's rate). **Monta matches it: 9% + US$1.00** (stored as
   `fee_pct = 9`, `fee_flat = 1.00` in settings, overridable per event).
 - Max 10 tickets per order by default. Pending orders release stock after a timeout (10 min).
 - Never oversell: stock decrement in a Postgres transaction (`SELECT … FOR UPDATE` / atomic
@@ -217,21 +217,21 @@ Fonts: Archivo (headings), Inter (body), Gelasio (serif accents). Radii 16–26p
 pill buttons (999px). Animations: marquee, pulse, spin, check-draw/pop/ring (scanner).
 Mobile first.
 
-### Xopa brand (decided)
-- **Name:** Xopa, from the Panamanian greeting "¿Xopa?" ("what's up?", *sopa* reversed).
-  Tagline idea: "¿Xopa esta noche?" / "What's on tonight?".
+### Monta brand (decided)
+- **Name:** Monta (renamed from Xopa on 2026-10-23), from the Panamanian "¿Qué se monta hoy?" ("what's going on today?").
+  Tagline: "¿Qué se monta hoy?" / "What's on tonight?".
 - **Logo:** `brand/logo.svg` (ticket with side notches and an X cut through it, then a lowercase
-  "xopa" wordmark in Archivo 800 and a live dot). Mark alone: `brand/logo-mark.svg`, used as the favicon/app icon.
+  "monta" wordmark in Archivo 800 and a live dot). Mark alone: `brand/logo-mark.svg`, used as the favicon/app icon.
 - **Colors:** reuse the graphite token set above, with one signature accent
-  **Xopa lime `#E8FF3A`** (CTA buttons, live dot, prices, scanner success) and text on lime
+  **Monta lime `#E8FF3A`** (CTA buttons, live dot, prices, scanner success) and text on lime
   `#131519`. Light mode accent darkened for contrast: `#5B6B00` for text/links, lime stays for fills.
 - Fonts: Archivo (headings, wordmark), Inter (body).
 
 ## 12. Domain & hosting
 
-- Vercel account (owner's, already linked to GitHub): import `victorazrakh-beep/Tickets`.
+- Vercel account (owner's, already linked to GitHub): import `victorazrakh-beep/monta`.
 - No domain yet: launch on the `*.vercel.app` URL. **[NEED later]** buy a domain (e.g. a
-  `xopa` .com/.app/.pa variant), then add it in Vercel; Apple Pay domain verification and
+  `monta` .com/.app/.pa variant), then add it in Vercel; Apple Pay domain verification and
   Resend sending domain both require it.
 
 ## 13. Build order

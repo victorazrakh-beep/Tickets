@@ -31,7 +31,7 @@ export async function Footer() {
           <Link href="/legal/cookies">{t.footer_cookies}</Link>
         </div>
       </div>
-      <div className="mx-auto max-w-6xl px-4 pb-8 text-xs text-muted">© {new Date().getFullYear()} Xopa</div>
+      <div className="mx-auto max-w-6xl px-4 pb-8 text-xs text-muted">© {new Date().getFullYear()} Monta</div>
     </footer>
   );
 }

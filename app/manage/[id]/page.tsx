@@ -115,7 +115,7 @@ export default async function Manage({ params, searchParams }: { params: Promise
                 <h2 className="font-display font-bold">{es ? "Privacidad" : "Privacy"}</h2>
                 <p className="text-sm text-sub">
                   {!ev.is_private
-                    ? (es ? "Público: aparece en Xopa y en buscadores." : "Public: listed on Xopa and in search engines.")
+                    ? (es ? "Público: aparece en Monta y en buscadores." : "Public: listed on Monta and in search engines.")
                     : (ev.access_passwords?.length
                       ? (es ? "Privado con contraseña: no aparece en búsquedas y pide contraseña al abrir el link." : "Private with password: hidden from search and asks for a password.")
                       : (es ? "Privado: no aparece en búsquedas; solo entra quien tenga el link." : "Private: hidden from search; only people with the link can open it."))}

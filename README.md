@@ -1,4 +1,4 @@
-# Xopa
+# Monta
 
 Ticketing for parties, concerts and events in Panama. Next.js (App Router) on Vercel + Supabase.
 Product spec: [`MASTER_PROMPT.md`](MASTER_PROMPT.md).

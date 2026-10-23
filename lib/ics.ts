@@ -6,7 +6,7 @@ export function ics(ev: { id: string; name: string; description: string; locatio
   const start = new Date(ev.starts_at);
   const end = ev.ends_at ? new Date(ev.ends_at) : new Date(start.getTime() + 3 * 3600_000);
   return [
-    "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Xopa//Tickets//ES", "CALSCALE:GREGORIAN", "METHOD:PUBLISH",
+    "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Monta//Tickets//ES", "CALSCALE:GREGORIAN", "METHOD:PUBLISH",
     "BEGIN:VEVENT",
     `UID:${ev.id}@xopa`, `DTSTAMP:${stamp(new Date())}`, `DTSTART:${stamp(start)}`, `DTEND:${stamp(end)}`,
     `SUMMARY:${esc(ev.name)}`, `DESCRIPTION:${esc(ev.description.slice(0, 500) + "\n\n" + ev.url)}`,

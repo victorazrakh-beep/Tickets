@@ -4,8 +4,8 @@ import type { Metadata } from "next";
 // Placeholders until a Panamanian lawyer drafts the final texts.
 const PAGES: Record<string, { title: string; body: string[] }> = {
   terminos: { title: "Términos y condiciones", body: [
-    "Xopa es una plataforma que permite a organizadores vender entradas y a compradores adquirirlas.",
-    "Xopa actúa como agente de cobro del organizador. El organizador es responsable del evento, su realización y su contenido.",
+    "Monta es una plataforma que permite a organizadores vender entradas y a compradores adquirirlas.",
+    "Monta actúa como agente de cobro del organizador. El organizador es responsable del evento, su realización y su contenido.",
     "El comprador paga un cargo por servicio que se muestra antes de pagar. La política de reembolso la define cada organizador y aparece en la página del evento.",
     "Este texto es provisional y será reemplazado por los términos definitivos.",
   ] },

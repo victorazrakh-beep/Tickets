@@ -7,7 +7,7 @@ import { createEvent } from "@/components/organizer/actions";
 
 export const metadata: Metadata = {
   title: "Crea tu evento y vende entradas",
-  description: "Publica tu evento en Xopa, cobra con tarjeta y Apple Pay, y controla la entrada desde tu teléfono.",
+  description: "Publica tu evento en Monta, cobra con tarjeta y Apple Pay, y controla la entrada desde tu teléfono.",
 };
 
 export default async function Create() {

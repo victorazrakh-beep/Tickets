@@ -9,10 +9,10 @@ export function LogoMark({ size = 28 }: { size?: number }) {
 
 export function Logo() {
   return (
-    <span className="inline-flex items-center gap-2" aria-label="Xopa">
+    <span className="inline-flex items-center gap-2" aria-label="Monta">
       <LogoMark />
       <span className="font-display font-extrabold text-xl tracking-tight">
-        xopa<span className="text-lime-text live-dot">.</span>
+        monta<span className="text-lime-text live-dot">.</span>
       </span>
     </span>
   );

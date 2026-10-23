@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* Xopa tokens: graphite base (dark default) + lime signature accent. */
+/* Monta tokens: graphite base (dark default) + lime signature accent. */
 :root {
   --bg: #131519;
   --surface: #1c1f25;

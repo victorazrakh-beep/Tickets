@@ -18,9 +18,9 @@ async function send(payload: Parameters<Resend["emails"]["send"]>[0]) {
 
 const wrap = (body: string) => `<!doctype html><html><body style="margin:0;background:#eceef0;font-family:Inter,Arial,sans-serif;color:#14161a">
 <div style="max-width:560px;margin:0 auto;padding:24px">
-<div style="font-weight:800;font-size:22px;letter-spacing:-0.5px;margin-bottom:16px">xopa<span style="color:#9fb000">.</span></div>
+<div style="font-weight:800;font-size:22px;letter-spacing:-0.5px;margin-bottom:16px">monta<span style="color:#9fb000">.</span></div>
 <div style="background:#fff;border-radius:16px;padding:24px">${body}</div>
-<p style="font-size:12px;color:#5b616b;margin-top:16px">Xopa · Panamá</p></div></body></html>`;
+<p style="font-size:12px;color:#5b616b;margin-top:16px">Monta · Panamá</p></div></body></html>`;
 
 export async function sendOrderConfirmation(orderId: string) {
   const db = admin();

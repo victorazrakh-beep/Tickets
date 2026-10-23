@@ -51,7 +51,7 @@ export default async function EventPage({ params, searchParams }: Params) {
   }
 
   const fee = await getFee(ev);
-  const organizer = ev.organizer?.organizer_name || ev.organizer?.name || ev.organizer_display_name || "Xopa";
+  const organizer = ev.organizer?.organizer_name || ev.organizer?.name || ev.organizer_display_name || "Monta";
   const music = embed(ev.music_url), video = embed(ev.video_url);
   const jsonLd = {
     "@context": "https://schema.org", "@type": "Event", name: ev.name, description: ev.description,
